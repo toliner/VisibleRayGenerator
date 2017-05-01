@@ -131,6 +131,11 @@ public enum CEVRType implements IStringSerializable {
 		return ce;
 	}
 
+	/**
+	 * 発電機の種類
+	 *
+	 * @author Kamesuta
+	 */
 	public static enum CETileType {
 		VisibleRay(VisibleRay1) {
 			@Override

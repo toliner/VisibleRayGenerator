@@ -52,6 +52,7 @@ public class ConfigGuiFactory implements IModGuiFactory {
 				list.add(new ConfigElement(cc));
 			}
 
+			// General項目をトップに表示します
 			if (general!=null) {
 				for (final ConfigCategory cc : general.getChildren())
 					list.add(new ConfigElement(cc));

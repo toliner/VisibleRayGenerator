@@ -62,14 +62,13 @@ public class VisibleRayGenerator {
 	/**
 	 * クレジット
 	 * <p>
-	 * Note: useMetadata=trueによりmcmod.infoをベースにこのメソッドで編集します。
+	 * Note: useMetadata=trueによりmcmod.infoをベースにこのメソッドで上書きします。
 	 *
 	 * @param meta
 	 */
 	private void setUpCredit(final ModMetadata meta) {
 		meta.authorList = Arrays.asList("takanasayo", "A.K", "Kamesuta");
 		meta.url = "https://minecraft.curseforge.com/projects/visibleraygenerator";
-		meta.credits = "Updated to mc1.8.9 By A.K. and Kamesuta";
 	}
 
 	@EventHandler

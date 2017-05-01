@@ -20,6 +20,14 @@ buildscript {
 plugins {
     id 'com.github.johnrengelman.shadow' version '1.2.4'
 }
+
+repositories {
+    maven {
+        name = "ic2"
+        url = "http://maven.ic2.player.to/"
+    }
+}
+
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'com.matthewprenger.cursegradle'
 
@@ -76,13 +84,6 @@ processResources {
 
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
-    }
-}
-
-repositories {
-    maven {
-        name = "ic2"
-        url = "http://maven.ic2.player.to/"
     }
 }
 

@@ -7,25 +7,25 @@
 				"A.K",
 				"Kamesuta"
 			],
-			"credits": "Updated to mc1.8.9 By A.K. and Kamesuta",
+			"credits": "Updated to MC${mcversion} By A.K. and Kamesuta",
 			"dependencies": [
-				"Forge@[${minforgeversion},)",
+				"Forge",
 				"IC2"
 			],
-			"description": "Add some visible ray energy generator to mc1.8.9",
+			"description": "Add some visible ray energy generator to MC${mcversion}",
 			"logoFile": "assets/vrgenerator/textures/misc/logo.jpg",
 			"mcversion": "${mcversion}",
 			"modid": "vrgenerator",
 			"name": "VisibleRayGenerator",
 			"parent": "",
 			"requiredMods": [
-				"Forge@[${minforgeversion},)",
+				"Forge",
 				"IC2"
 			],
 			"screenshots": [],
 			"updateUrl": "",
 			"url": "https://minecraft.curseforge.com/projects/visibleraygenerator",
-			"useDependencyInformation": false,
+			"useDependencyInformation": true,
 			"version": "${version}"
 		}
 	]
