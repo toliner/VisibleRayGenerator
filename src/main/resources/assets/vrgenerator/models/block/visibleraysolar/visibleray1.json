@@ -1,0 +1,8 @@
+{
+	"parent": "block/cube_bottom_top",
+	"textures": {
+		"side": "vrgenerator:blocks/visibleraysolar/visibleray1_side",
+		"bottom": "vrgenerator:blocks/visibleraysolar/visibleray1_bottom",
+		"top": "vrgenerator:blocks/visibleraysolar/visibleray1_top"
+	}
+}

@@ -1,0 +1,54 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "vrgenerator:visibleraysolar/visibleray1"
+	},
+	"variants": {
+	    "normal": [{}],
+	    "inventory": [{}],
+		"type": {
+			"visibleray1": {
+				"model": "vrgenerator:visibleraysolar/visibleray1"
+			},
+			"visibleray8": {
+				"model": "vrgenerator:visibleraysolar/visibleray8"
+			},
+			"visibleray64": {
+				"model": "vrgenerator:visibleraysolar/visibleray64"
+			},
+			"visibleray512": {
+				"model": "vrgenerator:visibleraysolar/visibleray512"
+			},
+			"cepermanentlight2": {
+				"model": "vrgenerator:visibleraysolar/cepermanentlight2"
+			},
+			"cepermanentlight8": {
+				"model": "vrgenerator:visibleraysolar/cepermanentlight8"
+			},
+			"cepermanentlight32": {
+				"model": "vrgenerator:visibleraysolar/cepermanentlight32"
+			},
+			"cepermanentlight128": {
+				"model": "vrgenerator:visibleraysolar/cepermanentlight128"
+			},
+			"cepermanentlight512": {
+				"model": "vrgenerator:visibleraysolar/cepermanentlight512"
+			},
+			"cepermanentlight2048": {
+				"model": "vrgenerator:visibleraysolar/cepermanentlight2048"
+			},
+			"cepermanentlight8192": {
+				"model": "vrgenerator:visibleraysolar/cepermanentlight8192"
+			},
+			"cepermanentlight32768": {
+				"model": "vrgenerator:visibleraysolar/cepermanentlight32768"
+			},
+			"cepermanentlight131072": {
+				"model": "vrgenerator:visibleraysolar/cepermanentlight131072"
+			},
+			"cepermanentlight532480": {
+				"model": "vrgenerator:visibleraysolar/cepermanentlight532480"
+			}
+		}
+	}
+}

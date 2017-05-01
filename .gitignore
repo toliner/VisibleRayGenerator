@@ -1,5 +1,25 @@
-/build
-/eclipse
-/.gradle
-*.iml
-/lib
+## .gitignore ##
+# ignore all
+*
+*/
+
+# allow any
+!/src
+!/src/
+!/gradle
+!/gradle/
+!/lib
+!/lib/
+!/version
+!/version/
+!/info
+!/info/
+!/build.gradle
+!/settings.gradle
+!/gradle.properties
+!/install.bat
+!/gradlew
+!/gradlew.bat
+!/install.bat
+!/build.bat
+!/.gitignore
