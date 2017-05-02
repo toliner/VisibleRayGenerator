@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -39,7 +38,7 @@ public class CEGuiVR extends GuiContainer {
 		this.tileentity.updateSunVisibility();
 		//現在の発電量をGuiに表示
 		final String name = I18n.format("vrgenerator.gui.solar", this.tileentity.isSunVisible() ? this.tileentity.getProduction() : 0);
-		final String inv = StatCollector.translateToLocal("container.inventory");
+		final String inv = I18n.format("container.inventory");
 		this.fontRendererObj.drawString(name, (this.xSize-this.fontRendererObj.getStringWidth(name))/2, 6, 0x404040);
 		this.fontRendererObj.drawString(inv, 8, this.ySize-96+2, 0x404040);
 	}

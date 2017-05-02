@@ -15,8 +15,9 @@ import net.minecraft.world.World;
  * @author Kamesuta
  */
 public class CEItemLavaUpdater extends Item {
-	CEItemLavaUpdater() {
+	public CEItemLavaUpdater() {
 		super();
+		setRegistryName("lavaupdater");
 		setMaxDamage(132);
 		setMaxStackSize(1);
 	}
@@ -40,7 +41,7 @@ public class CEItemLavaUpdater extends Item {
 				for (int x = px-LavaUpdateArea; x<=px+LavaUpdateArea; x++) {
 					final BlockPos pos = new BlockPos(x, y, z);
 					final IBlockState state = world.getBlockState(pos);
-					if (state.getBlock().getMaterial()==CEItems.Vanilla.blocklava.getMaterial()) {
+					if (state.getBlock().getMaterial()==CEItems.Vanilla.materialLava) {
 						final int meta = CEItems.Vanilla.blocklava.getMetaFromState(state);
 						if (meta!=0)
 							//mod_CompactEngine.addChat("update lava %d,%d,%d", x, y, z);

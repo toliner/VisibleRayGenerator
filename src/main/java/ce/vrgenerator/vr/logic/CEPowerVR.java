@@ -8,6 +8,8 @@ package ce.vrgenerator.vr.logic;
  * @author Kamesuta
  */
 public class CEPowerVR {
+	public static final CEPowerVR DefaultPower = new CEPowerVR(0, 1, 1);
+
 	/** Low Voltage		| 低圧 */
 	public static final int LV = 32;
 	/** Medium Voltage	| 中圧 */
@@ -32,8 +34,8 @@ public class CEPowerVR {
 		return this.level;
 	}
 
-	/** 総出力EU / Tick */
-	public int getProduction() {
+	/** 最大総出力EU / Tick */
+	public int getMaxProduction() {
 		return this.production;
 	}
 
@@ -42,9 +44,19 @@ public class CEPowerVR {
 		return this.packet;
 	}
 
+	/** 最大総出力EU / パケット [総出力÷パケット数]*/
+	public int getMaxOutput() {
+		return getMaxProduction()/getPacket();
+	}
+
+	/** 総出力EU / パケット [総出力÷パケット数]*/
+	public int getOutput(final int production) {
+		return production/getPacket();
+	}
+
 	/** 電圧 (IC2 exp) {1=LV, 2=MV, 3=HV, 4=EV, 5=EVより大きい} */
 	public int getTier() {
-		return getTierFromProduction(getProduction());
+		return getTierFromProduction(getMaxProduction());
 	}
 
 	/** 総電力 → 電圧 (IC2 exp) {1=LV, 2=MV, 3=HV, 4=EV, 5=EVより大きい} */

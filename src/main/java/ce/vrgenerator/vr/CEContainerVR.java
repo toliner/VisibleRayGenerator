@@ -24,7 +24,7 @@ public class CEContainerVR extends Container {
 		this.sunIsVisible = false;
 		this.initialized = false;
 		this.tileEntity = solar;
-		addSlotToContainer(new CEContainerSlotVR(solar, solar.getTier(), 0, 80, 26));
+		addSlotToContainer(new CEContainerSlotVR(solar, solar.getPower().getTier(), 0, 80, 26));
 
 		for (int i = 0; i<3; i++)
 			for (int k = 0; k<9; k++)

@@ -1,9 +1,9 @@
 package ce.vrgenerator.vr;
 
+import ce.vrgenerator.CEItems;
 import ic2.api.item.IElectricItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -31,7 +31,7 @@ public class CEContainerSlotVR extends Slot {
 
 	@Override
 	public boolean isItemValid(final ItemStack itemstack) {
-		return itemstack.getItem() instanceof ItemBlock&&((ItemBlock) itemstack.getItem()).block.getLightValue()>=7||isItemValidCharge(itemstack);
+		return itemstack!=null&&CEItems.getItemLightLevel(itemstack.getItem())>=7||isItemValidCharge(itemstack);
 	}
 
 	public boolean isItemValidCharge(final ItemStack itemstack) {

@@ -56,8 +56,11 @@ public class CommonProxy implements IGuiHandler {
 	}
 
 	public void preInit(final FMLPreInitializationEvent event) {
-		GameRegistry.registerBlock(CEItems.solarBlock = new CEBlockVR(), CEItemVR.class, "visibleraysolar");
-		GameRegistry.registerItem(CEItems.lavaUpdater = new CEItemLavaUpdater(), "lavaupdater");
+		// GameRegistry.registerBlock(CEItems.solarBlock = new CEBlockVR(), CEItemVR.class, "visibleraysolar");
+		GameRegistry.registerBlock(CEItems.solarBlock = new CEBlockVR(), CEItemVR.class);
+		// GameRegistry.registerItem(CEItems.solarItemBlock = new CEItemVR(CEItems.solarBlock));
+		// GameRegistry.register(CEItems.lavaUpdater = new CEItemLavaUpdater(), "lavaupdater");
+		GameRegistry.registerItem(CEItems.lavaUpdater = new CEItemLavaUpdater());
 
 		try {
 			final CreativeTabs tabIC2 = (CreativeTabs) Info.ic2ModInstance.getClass().getField("tabIC2").get(Info.ic2ModInstance);

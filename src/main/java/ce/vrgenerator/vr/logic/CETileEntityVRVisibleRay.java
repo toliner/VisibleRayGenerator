@@ -5,7 +5,6 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import ce.vrgenerator.CEItems;
-import ce.vrgenerator.vr.CEVRType;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -34,15 +33,23 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 	// private int ticker;
 	// private boolean initialized;
 
-	private ItemStack inventory[] = new ItemStack[1];
 	// 光レベル計算用
 	//private static int[] lightPower = { 1,2,4,8,16,32,64,128,256,512,1024 };
+
+	private ItemStack inventory[] = new ItemStack[1];
+
+	private int production;
 
 	public CETileEntityVRVisibleRay(final CEPowerVR power) {
 		super(power);
 	}
 
 	public CETileEntityVRVisibleRay() {
+	}
+
+	@Override
+	public int getProduction() {
+		return this.production;
 	}
 
 	public boolean isSunVisible() {
@@ -84,7 +91,7 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 	}
 
 	public void updateSunVisibility() {
-		final int maxProduction = this.power.getProduction();
+		final int maxProduction = getPower().getMaxProduction();
 		//真上のブロックが太陽光を浴びていれば（この判定がかなり重い）
 		if (isSunVisible(this.worldObj, this.pos.add(0, 1, 0))) {
 			//通常通り発電(ソーラーと同じ）
@@ -98,13 +105,14 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 				//溶岩なら1/8
 				if (item instanceof ItemBlock) {
 					final Block block = ((ItemBlock) item).block;
+					final int blocklight = CEItems.getItemLightLevel(item);
 					if (block==CEItems.Vanilla.blocklava||block==CEItems.Vanilla.blockflowinglava)
 						light = maxProduction/8.0d;
-					else if (block.getLightValue()==15)
+					else if (blocklight==15)
 						light = maxProduction/2.0d;
-					else if (block.getLightValue()==14)
+					else if (blocklight==14)
 						light = maxProduction/4.0d;
-					else if (block.getLightValue()>=7)
+					else if (blocklight>=7)
 						light = maxProduction/16.0d;
 				}
 
@@ -119,11 +127,6 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 			this.production = 0;
 			this.isSunVisible = false;
 		}
-	}
-
-	@Override
-	protected CEPowerVR getPowerFromLevel(final int level) {
-		return CEVRType.fromTileID(CEVRType.CETileType.VisibleRay, level).getPower();
 	}
 
 	@Override
@@ -255,12 +258,12 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 
 	@Override
 	public boolean isItemValidForSlot(final int i, final ItemStack itemstack) {
-		return itemstack.getItem() instanceof ItemBlock&&((ItemBlock) itemstack.getItem()).block.getLightValue()>0;
+		return CEItems.getItemLightLevel(itemstack.getItem())>0;
 	}
 
 	@Override
 	public boolean canInsertItem(final int i, final ItemStack itemstack, final EnumFacing direction) {
-		return itemstack.getItem() instanceof ItemBlock&&((ItemBlock) itemstack.getItem()).block.getLightValue()>0;
+		return CEItems.getItemLightLevel(itemstack.getItem())>0;
 	}
 
 	@Override
@@ -270,7 +273,7 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 
 	@Override
 	public String getName() {
-		return String.format("CE Solar %d", getProduction());
+		return String.format("CE Solar %d", getPower().getMaxProduction());
 	}
 
 	@Override

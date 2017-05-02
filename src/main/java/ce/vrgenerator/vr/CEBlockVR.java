@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 import ce.vrgenerator.CEItems;
 import ce.vrgenerator.VisibleRayGenerator;
 import ce.vrgenerator.vr.logic.CETileEntityVR;
-import ce.vrgenerator.vr.logic.CETileEntityVRCEPermanentLight;
+import ce.vrgenerator.vr.logic.CETileEntityVRVisibleRay;
 import ic2.api.tile.IWrenchable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -40,7 +40,7 @@ public class CEBlockVR extends BlockContainer implements IWrenchable {
 
 	public CEBlockVR() {
 		super(Material.iron);
-		setRegistryName("CE_Solar");
+		setRegistryName("visibleraysolar");
 		setDefaultState(this.blockState.getBaseState().withProperty(TYPE, CEVRType.VisibleRay1));
 		setHardness(3F);
 		setStepSound(soundTypeMetal);
@@ -77,15 +77,11 @@ public class CEBlockVR extends BlockContainer implements IWrenchable {
 	}
 
 	@Override
-	public void randomDisplayTick(final World worldIn, final BlockPos pos, final IBlockState state, final Random rand) {
-	}
-
-	@Override
 	public boolean onBlockActivated(final World world, final BlockPos pos, final IBlockState state, final EntityPlayer entityplayer, final EnumFacing side, final float hitX, final float hitY, final float hitZ) {
 		final TileEntity tile = world.getTileEntity(pos);
 		if (tile==null)
 			return false;
-		if (tile instanceof CETileEntityVRCEPermanentLight)
+		if (!(tile instanceof CETileEntityVRVisibleRay))
 			return false;
 
 		final ItemStack itemstackequip = entityplayer.getCurrentEquippedItem();
