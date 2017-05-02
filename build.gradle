@@ -10,10 +10,13 @@ buildscript {
             name = 'sonatype'
             url = 'https://oss.sonatype.org/content/repositories/snapshots/'
         }
+        maven {
+	    	url "https://plugins.gradle.org/m2/"
+	    }
     }
     dependencies {
         classpath project.forgegradle
-        classpath 'com.matthewprenger:CurseGradle:1.0-SNAPSHOT'
+        classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.0.8'
     }
 }
 
@@ -30,6 +33,9 @@ repositories {
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'com.matthewprenger.cursegradle'
+
+println(project.api_key_curseforge)
+println(project.extra_curseforge_id)
 
 // ext.build = System.getenv().BUILD_NUMBER ?: 'git'
 ext.modversion = "${project.version_major}.${project.version_minor}.${project.version_micro}"
@@ -186,14 +192,22 @@ task release(dependsOn: 'signJars', type: Copy) {
 }
 
 if (project.hasProperty('api_key_curseforge') && project.hasProperty('extra_curseforge_id')) {
-    curse {
-        dependsOn signJars
-        releaseType = project.hasProperty('extra_curseforge_releasetype') ? project.extra_curseforge_releasetype : 'release'
+    curseforge {
         apiKey = project.api_key_curseforge
-        projectId = project.extra_curseforge_id
-        changelog = ''
+        //dependsOn signJars
+        project {
+            id = project.extra_curseforge_id
+            changelog = ''
+            releaseType = project.hasProperty('extra_curseforge_releasetype') ? project.extra_curseforge_releasetype : 'release'
 
-        additionalArtifact devJar, sourceJar, apiJar
-        relatedProject 'industrial-craft'
+            mainArtifact jar
+            addArtifact devJar
+            addArtifact sourceJar
+            //addArtifact apiJar
+
+            relations {
+            	requiredLibrary 'industrial-craft'
+            }
+        }
     }
 }
