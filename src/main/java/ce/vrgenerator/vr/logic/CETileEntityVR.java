@@ -91,12 +91,9 @@ public abstract class CETileEntityVR extends TileEntity implements IEnergySource
 		return getPower().getMaxProduction();
 	}
 
-	/**
-	 * 1.9から電圧による爆発が再実装されたため、非推奨のIMultiEnergySourceを使用し、EUを分割して送信します。
-	 */
 	@Override
 	public double getOfferedEnergy() {
-		return getPower().getOutput(getProduction());
+		return getProduction();
 	}
 
 	@Override
