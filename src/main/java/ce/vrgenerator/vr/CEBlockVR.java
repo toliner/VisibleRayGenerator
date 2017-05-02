@@ -3,27 +3,32 @@ package ce.vrgenerator.vr;
 import java.util.List;
 import java.util.Random;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Lists;
 
 import ce.vrgenerator.CEItems;
 import ce.vrgenerator.VisibleRayGenerator;
 import ce.vrgenerator.vr.logic.CETileEntityVR;
-import ce.vrgenerator.vr.logic.CETileEntityVRCEPermanentLight;
+import ce.vrgenerator.vr.logic.CETileEntityVRVisibleRay;
 import ic2.api.tile.IWrenchable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -39,11 +44,11 @@ public class CEBlockVR extends BlockContainer implements IWrenchable {
 	public static final PropertyEnum<CEVRType> TYPE = PropertyEnum.create("type", CEVRType.class);
 
 	public CEBlockVR() {
-		super(Material.iron);
-		setRegistryName("CE_Solar");
+		super(Material.IRON);
+		setRegistryName("visibleraysolar");
 		setDefaultState(this.blockState.getBaseState().withProperty(TYPE, CEVRType.VisibleRay1));
 		setHardness(3F);
-		setStepSound(soundTypeMetal);
+		setSoundType(SoundType.METAL);
 	}
 
 	@Override
@@ -52,8 +57,8 @@ public class CEBlockVR extends BlockContainer implements IWrenchable {
 	}
 
 	@Override
-	public int getRenderType() {
-		return 3;
+	public EnumBlockRenderType getRenderType(final IBlockState state) {
+		return EnumBlockRenderType.MODEL;
 	}
 
 	@Override
@@ -67,7 +72,7 @@ public class CEBlockVR extends BlockContainer implements IWrenchable {
 	}
 
 	@Override
-	public ItemStack getPickBlock(final MovingObjectPosition target, final World world, final BlockPos pos, final EntityPlayer player) {
+	public ItemStack getPickBlock(final IBlockState state, final RayTraceResult target, final World world, final BlockPos pos, final EntityPlayer player) {
 		return getItemStackFromState(world.getBlockState(pos));
 	}
 
@@ -77,18 +82,18 @@ public class CEBlockVR extends BlockContainer implements IWrenchable {
 	}
 
 	@Override
-	public void randomDisplayTick(final World worldIn, final BlockPos pos, final IBlockState state, final Random rand) {
+	public void randomDisplayTick(final IBlockState stateIn, final World worldIn, final BlockPos pos, final Random rand) {
 	}
 
 	@Override
-	public boolean onBlockActivated(final World world, final BlockPos pos, final IBlockState state, final EntityPlayer entityplayer, final EnumFacing side, final float hitX, final float hitY, final float hitZ) {
+	public boolean onBlockActivated(final World world, final BlockPos pos, final IBlockState state, final EntityPlayer entityplayer, final EnumHand hand, @Nullable final ItemStack heldItem, final EnumFacing side, final float hitX, final float hitY, final float hitZ) {
 		final TileEntity tile = world.getTileEntity(pos);
 		if (tile==null)
 			return false;
-		if (tile instanceof CETileEntityVRCEPermanentLight)
+		if (!(tile instanceof CETileEntityVRVisibleRay))
 			return false;
 
-		final ItemStack itemstackequip = entityplayer.getCurrentEquippedItem();
+		final ItemStack itemstackequip = entityplayer.getHeldItemMainhand();
 		if (itemstackequip!=null) {
 			final Item itemequip = itemstackequip.getItem();
 			if (itemequip==CEItems.IC2.wrench.getItem()||itemequip==CEItems.IC2.electricwrench.getItem())
@@ -155,8 +160,8 @@ public class CEBlockVR extends BlockContainer implements IWrenchable {
 	}
 
 	@Override
-	protected BlockState createBlockState() {
-		return new BlockState(this, TYPE);
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, TYPE);
 	}
 
 	@Override

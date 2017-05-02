@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 public class CEItemVR extends ItemBlock {
 	public CEItemVR(final Block block) {
 		super(block);
+		setRegistryName("visibleraysolar");
 		setMaxDamage(0);
 		setHasSubtypes(true);
 	}

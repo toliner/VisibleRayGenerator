@@ -88,8 +88,8 @@ processResources {
 }
 
 dependencies {
-    compile 'net.industrial-craft:industrialcraft-2:2.3.262-ex18:api'
-    compile 'net.industrial-craft:industrialcraft-2:2.3.262-ex18:dev'
+    compile 'net.industrial-craft:industrialcraft-2:2.5.63-ex19:api'
+    compile 'net.industrial-craft:industrialcraft-2:2.5.63-ex19:dev'
 }
 
 def commonManifest = {

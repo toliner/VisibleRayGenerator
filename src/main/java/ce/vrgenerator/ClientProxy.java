@@ -2,9 +2,9 @@ package ce.vrgenerator;
 
 import ce.vrgenerator.vr.CEVRType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -60,7 +60,7 @@ public class ClientProxy extends CommonProxy {
 	public static void addChat(final String message) {
 		if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
 			final Minecraft mc = Minecraft.getMinecraft();
-			mc.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText(message));
+			mc.ingameGUI.getChatGUI().printChatMessage(new TextComponentString(message));
 		}
 	}
 }

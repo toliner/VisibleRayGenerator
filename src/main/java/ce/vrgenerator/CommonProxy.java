@@ -11,7 +11,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -56,8 +56,11 @@ public class CommonProxy implements IGuiHandler {
 	}
 
 	public void preInit(final FMLPreInitializationEvent event) {
-		GameRegistry.registerBlock(CEItems.solarBlock = new CEBlockVR(), CEItemVR.class, "visibleraysolar");
-		GameRegistry.registerItem(CEItems.lavaUpdater = new CEItemLavaUpdater(), "lavaupdater");
+		// GameRegistry.registerBlock(CEItems.solarBlock = new CEBlockVR(), CEItemVR.class, "visibleraysolar");
+		GameRegistry.register(CEItems.solarBlock = new CEBlockVR());
+		GameRegistry.register(CEItems.solarItemBlock = new CEItemVR(CEItems.solarBlock));
+		// GameRegistry.register(CEItems.lavaUpdater = new CEItemLavaUpdater(), "lavaupdater");
+		GameRegistry.register(CEItems.lavaUpdater = new CEItemLavaUpdater());
 
 		try {
 			final CreativeTabs tabIC2 = (CreativeTabs) Info.ic2ModInstance.getClass().getField("tabIC2").get(Info.ic2ModInstance);

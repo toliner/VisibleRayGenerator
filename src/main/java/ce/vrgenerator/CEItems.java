@@ -1,9 +1,15 @@
 package ce.vrgenerator;
 
+import ce.vrgenerator.vr.CEBlockVR;
+import ce.vrgenerator.vr.CEItemVR;
 import ic2.api.item.IC2Items;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDynamicLiquid;
+import net.minecraft.block.BlockStaticLiquid;
+import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
 /**
@@ -13,9 +19,11 @@ import net.minecraft.item.ItemStack;
  */
 public class CEItems {
 	/** 								// 発電量ブロック */
-	public static Block solarBlock;
+	public static CEBlockVR solarBlock;
+	/** 								// 発電量ブロックアイテム */
+	public static CEItemVR solarItemBlock;
 	/** 								// 溶岩更新機 */
-	public static Item lavaUpdater;
+	public static CEItemLavaUpdater lavaUpdater;
 
 	/**
 	 * バニラアイテム
@@ -25,18 +33,20 @@ public class CEItems {
 	public static class Vanilla {
 		// Item.lightStoneDust			// グロウストーンダスト
 		/** Block.glowStone				// グロウストーン */
-		public final static ItemStack glowstone = new ItemStack(Blocks.glowstone);
+		public final static ItemStack glowstone = new ItemStack(Blocks.GLOWSTONE);
 		// Block.glass					// ガラス */
+		/** 							// 溶岩原マテリアル */
+		public final static Material materialLava = Material.LAVA;
 		/** 							// 溶岩原 */
-		public final static Block blocklava = Blocks.lava;
+		public final static BlockStaticLiquid blocklava = Blocks.LAVA;
 		/** 							// 溶岩流 */
-		public final static Block blockflowinglava = Blocks.flowing_lava;
+		public final static BlockDynamicLiquid blockflowinglava = Blocks.FLOWING_LAVA;
 		/** 							// 黒曜石 */
-		public final static Block blockobsidian = Blocks.obsidian;
+		public final static Block blockobsidian = Blocks.OBSIDIAN;
 		/** 							// 水源 */
-		public final static Block blockwater = Blocks.water;
+		public final static BlockStaticLiquid blockwater = Blocks.WATER;
 		/** 							// 水流 */
-		public final static Block blockflowingwater = Blocks.flowing_water;
+		public final static BlockDynamicLiquid blockflowingwater = Blocks.FLOWING_WATER;
 	}
 
 	/**
@@ -91,5 +101,17 @@ public class CEItems {
 		public static final ItemStack electricwrench = IC2Items.getItem("electric_wrench");
 		/** 							// メーター */
 		public static final ItemStack ecmeter = IC2Items.getItem("meter");
+	}
+
+	@SuppressWarnings("deprecation")
+	public static int getItemLightLevel(final Item item) {
+		if (item instanceof ItemBlock) {
+			final Block block = ((ItemBlock) item).block;
+			try {
+				return block.getLightValue(block.getDefaultState());
+			} catch (final Exception e) {
+			}
+		}
+		return 0;
 	}
 }

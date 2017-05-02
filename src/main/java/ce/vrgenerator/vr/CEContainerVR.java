@@ -2,8 +2,9 @@ package ce.vrgenerator.vr;
 
 import ce.vrgenerator.vr.logic.CETileEntityVRVisibleRay;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -24,7 +25,7 @@ public class CEContainerVR extends Container {
 		this.sunIsVisible = false;
 		this.initialized = false;
 		this.tileEntity = solar;
-		addSlotToContainer(new CEContainerSlotVR(solar, solar.getTier(), 0, 80, 26));
+		addSlotToContainer(new CEContainerSlotVR(solar, solar.getPower().getTier(), 0, 80, 26));
 
 		for (int i = 0; i<3; i++)
 			for (int k = 0; k<9; k++)
@@ -47,34 +48,36 @@ public class CEContainerVR extends Container {
 
 		if (var4!=null&&var4.getHasStack()) {
 			final ItemStack var5 = var4.getStack();
-			var3 = var5.copy();
+			if (var5!=null) {
+				var3 = var5.copy();
 
-			if (par2==0) {
-				if (!mergeItemStack(var5, 1, 36, true))
+				if (par2==0) {
+					if (!mergeItemStack(var5, 1, 36, true))
+						return null;
+
+					var4.onSlotChange(var5, var3);
+				} else if (!mergeItemStack(var5, 0, 1, false))
 					return null;
 
-				var4.onSlotChange(var5, var3);
-			} else if (!mergeItemStack(var5, 0, 1, false))
-				return null;
+				if (var5.stackSize==0)
+					var4.putStack((ItemStack) null);
+				else
+					var4.onSlotChanged();
 
-			if (var5.stackSize==0)
-				var4.putStack((ItemStack) null);
-			else
-				var4.onSlotChanged();
+				if (var5.stackSize==var3.stackSize)
+					return null;
 
-			if (var5.stackSize==var3.stackSize)
-				return null;
-
-			var4.onPickupFromSlot(par1EntityPlayer, var5);
+				var4.onPickupFromSlot(par1EntityPlayer, var5);
+			}
 		}
 
 		return var3;
 	}
 
 	@Override
-	public ItemStack slotClick(final int slot, final int button, final int shift, final EntityPlayer entityplayer) {
+	public ItemStack slotClick(final int slot, final int button, final ClickType shift, final EntityPlayer entityplayer) {
 		ItemStack result = null;
-		if (slot!=0&&shift==1) {
+		if (slot!=0&&shift==ClickType.QUICK_MOVE) {
 			final Slot topslot = this.inventorySlots.get(0);
 			final Slot currentSlot = this.inventorySlots.get(slot);
 			ItemStack stack = currentSlot.getStack();
@@ -100,8 +103,8 @@ public class CEContainerVR extends Container {
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
 
-		for (int i = 0; i<this.crafters.size(); i++) {
-			final ICrafting icrafting = this.crafters.get(i);
+		for (int i = 0; i<this.listeners.size(); i++) {
+			final IContainerListener icrafting = this.listeners.get(i);
 
 			if (this.sunIsVisible!=this.tileEntity.isSunVisible()||!this.initialized) {
 				icrafting.sendProgressBarUpdate(this, 0, this.tileEntity.isSunVisible() ? 1 : 0);

@@ -4,7 +4,10 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 /**
@@ -15,8 +18,9 @@ import net.minecraft.world.World;
  * @author Kamesuta
  */
 public class CEItemLavaUpdater extends Item {
-	CEItemLavaUpdater() {
+	public CEItemLavaUpdater() {
 		super();
+		setRegistryName("lavaupdater");
 		setMaxDamage(132);
 		setMaxStackSize(1);
 	}
@@ -27,7 +31,7 @@ public class CEItemLavaUpdater extends Item {
 	}
 
 	@Override
-	public ItemStack onItemRightClick(final ItemStack stack, final World world, final EntityPlayer player) {
+	public ActionResult<ItemStack> onItemRightClick(final ItemStack stack, final World world, final EntityPlayer player, final EnumHand hand) {
 		final int px = (int) player.posX;
 		final int py = (int) player.posY;
 		final int pz = (int) player.posZ;
@@ -40,7 +44,7 @@ public class CEItemLavaUpdater extends Item {
 				for (int x = px-LavaUpdateArea; x<=px+LavaUpdateArea; x++) {
 					final BlockPos pos = new BlockPos(x, y, z);
 					final IBlockState state = world.getBlockState(pos);
-					if (state.getBlock().getMaterial()==CEItems.Vanilla.blocklava.getMaterial()) {
+					if (state.getMaterial()==CEItems.Vanilla.materialLava) {
 						final int meta = CEItems.Vanilla.blocklava.getMetaFromState(state);
 						if (meta!=0)
 							//mod_CompactEngine.addChat("update lava %d,%d,%d", x, y, z);
@@ -53,6 +57,6 @@ public class CEItemLavaUpdater extends Item {
 				}
 		//mod_CompactEngine.addChat("end lava update");
 		stack.damageItem(1, player);
-		return stack;
+		return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
 	}
 }

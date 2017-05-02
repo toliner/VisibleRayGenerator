@@ -4,10 +4,14 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import ce.vrgenerator.vr.CEBlockVR;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergyAcceptor;
 import ic2.api.energy.tile.IEnergySource;
+import ic2.api.energy.tile.IMultiEnergySource;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -17,12 +21,14 @@ import net.minecraftforge.common.MinecraftForge;
 
 /**
  * 発電機タイルエンティティロジック
+ * <p>
+ * Note: 1.9から電圧による爆発が再実装されたため、非推奨のIMultiEnergySourceを使用し、EUを分割して送信します。
  *
  * @author takanasayo
  * @author A.K
  * @author Kamesuta
  */
-public abstract class CETileEntityVR extends TileEntity implements IEnergySource, ITickable {
+public abstract class CETileEntityVR extends TileEntity implements IEnergySource, IMultiEnergySource, ITickable {
 	/**
 	 * 一度ずつ交互にチャンクロード/アンロードを発生させます
 	 */
@@ -32,25 +38,10 @@ public abstract class CETileEntityVR extends TileEntity implements IEnergySource
 	protected int ticksSinceLastActiveUpdate = 0;
 
 	/** 定義データ */
-	protected CEPowerVR power;
-	/** 発電レベル */
-	protected int level;
-	/** 総出力EU / Tick */
-	protected int production;
-	/** 送電するパケット数 / Tick */
-	@Deprecated
-	protected int packet;
-	/** 電圧 (IC2 exp) {1=LV, 2=MV, 3=HV, 4=EV, 5=EVより大きい} */
-	protected int tier = 1;
-	// 電圧 (IC2 Classic) [総出力÷パケット数]
-	// public short output = 1;
+	private CEPowerVR power;
 
 	protected CETileEntityVR(final CEPowerVR power) {
 		this.power = power;
-		this.level = power.getLevel();
-		this.production = power.getProduction();
-		this.packet = power.getPacket();
-		this.tier = power.getTier();
 	}
 
 	protected CETileEntityVR() {
@@ -87,31 +78,29 @@ public abstract class CETileEntityVR extends TileEntity implements IEnergySource
 		}
 	}
 
-	protected abstract CEPowerVR getPowerFromLevel(int level);
-
 	@Override
 	public void readFromNBT(final NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
-		final int level = nbttagcompound.getInteger("level");
-		this.power = getPowerFromLevel(level);
-		this.level = level;
-		this.production = nbttagcompound.getInteger("production");
-		this.tier = nbttagcompound.getInteger("tier");
 		this.activityMeter = nbttagcompound.getInteger("activitymeter");
 	}
 
 	@Override
-	public void writeToNBT(final NBTTagCompound nbttagcompound) {
-		super.writeToNBT(nbttagcompound);
-		nbttagcompound.setInteger("level", this.level);
-		nbttagcompound.setInteger("production", getProduction());
-		nbttagcompound.setInteger("tier", getTier());
+	public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
+		nbttagcompound = super.writeToNBT(nbttagcompound);
 		nbttagcompound.setInteger("activitymeter", this.activityMeter);
+		return nbttagcompound;
 	}
 
+	public int getProduction() {
+		return getPower().getMaxProduction();
+	}
+
+	/**
+	 * 1.9から電圧による爆発が再実装されたため、非推奨のIMultiEnergySourceを使用し、EUを分割して送信します。
+	 */
 	@Override
 	public double getOfferedEnergy() {
-		return getProduction();
+		return getPower().getOutput(getProduction());
 	}
 
 	@Override
@@ -119,9 +108,25 @@ public abstract class CETileEntityVR extends TileEntity implements IEnergySource
 
 	}
 
+	/**
+	 * 1.9から電圧による爆発が再実装されたため、非推奨のIMultiEnergySourceを使用し、EUを分割して送信します。
+	 */
+	@Override
+	public boolean sendMultipleEnergyPackets() {
+		return true;
+	}
+
+	/**
+	 * 1.9から電圧による爆発が再実装されたため、非推奨のIMultiEnergySourceを使用し、EUを分割して送信します。
+	 */
+	@Override
+	public int getMultipleEnergyPacketAmount() {
+		return getPower().getPacket();
+	}
+
 	@Override
 	public int getSourceTier() {
-		return getTier();
+		return getPower().getTier();
 	}
 
 	@Override
@@ -130,18 +135,18 @@ public abstract class CETileEntityVR extends TileEntity implements IEnergySource
 	}
 
 	/**
-	 * ティア
-	 * @return ティア
+	 * 電力
+	 * @return 電力
 	 */
-	public int getTier() {
-		return this.tier;
-	}
-
-	/**
-	 * 発電量
-	 * @return 発電量
-	 */
-	public int getProduction() {
-		return this.production;
+	public CEPowerVR getPower() {
+		if (this.power==null) {
+			final IBlockState state = this.worldObj.getBlockState(getPos());
+			final Block block = state.getBlock();
+			if (block instanceof CEBlockVR)
+				this.power = ((CEBlockVR) block).getTypeFromState(state).getPower();
+			else
+				this.power = CEPowerVR.DefaultPower;
+		}
+		return this.power;
 	}
 }
