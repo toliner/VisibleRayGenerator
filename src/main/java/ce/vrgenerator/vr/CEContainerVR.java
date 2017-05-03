@@ -50,7 +50,7 @@ public class CEContainerVR extends Container {
 			var3 = var5.copy();
 
 			if (par2==0) {
-				if (!mergeItemStack(var5, 1, 36, true))
+				if (!mergeItemStack(var5, 1, 37, true))
 					return null;
 
 				var4.onSlotChange(var5, var3);
