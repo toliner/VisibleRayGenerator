@@ -81,7 +81,7 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 	public static boolean isSunVisible(final World world, final BlockPos pos) {
 		final BlockPos posup = pos.up();
 		world.calculateInitialSkylight();
-		final int lightblock = world.getBlockState(posup).getBlock().getLightValue(world, posup);
+		final int lightblock = world.getBlockState(posup).getLightValue(world, posup);
 		final float light = getSkyLight(world, posup);
 		// FMLLog.info("sun:%s, block:%s", light, lightblock);
 		return light>0.0F||lightblock>=15;
