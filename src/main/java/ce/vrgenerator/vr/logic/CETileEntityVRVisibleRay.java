@@ -18,7 +18,10 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.common.util.Constants;
 
 /**
@@ -34,7 +37,7 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 	// private boolean initialized;
 
 	// 光レベル計算用
-	//private static int[] lightPower = { 1,2,4,8,16,32,64,128,256,512,1024 };
+	// private static int[] lightPower = { 1,2,4,8,16,32,64,128,256,512,1024 };
 
 	private ItemStack inventory[] = new ItemStack[1];
 
@@ -76,9 +79,30 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 	//	}
 
 	public static boolean isSunVisible(final World world, final BlockPos pos) {
-		world.calculateInitialSkylight();
-		final int light = world.getLight(pos);
-		return light==15;
+		final float light = getSkyLight(world, pos.up());
+		return light>0.0F;
+	}
+
+	public static float getSkyLight(final World world, final BlockPos pos) {
+		// FMLLog.getLogger().info(pos);
+		if (world.provider.getHasNoSky())
+			return 0.0F;
+		else {
+			float sunBrightness = limit((float) Math.cos(world.getCelestialAngleRadians(1.0F))*2.0F+0.2F, 0.0F, 1.0F);
+
+			if (!BiomeDictionary.isBiomeOfType(world.getChunkFromBlockCoords(pos).getBiome(pos, world.getWorldChunkManager()), Type.SANDY)) {
+				sunBrightness *= 1.0F-world.getRainStrength(1.0F)*5.0F/16.0F;
+				sunBrightness *= 1.0F-world.getThunderStrength(1.0F)*5.0F/16.0F;
+
+				sunBrightness = limit(sunBrightness, 0.0F, 1.0F);
+			}
+
+			return world.getLightFor(EnumSkyBlock.SKY, pos)/15.0F*sunBrightness;
+		}
+	}
+
+	private static float limit(final float value, final float min, final float max) {
+		return !Float.isNaN(value)&&value>min ? value>=max ? max : value : min;
 	}
 
 	@Override
@@ -93,7 +117,7 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 	public void updateSunVisibility() {
 		final int maxProduction = getPower().getMaxProduction();
 		//真上のブロックが太陽光を浴びていれば（この判定がかなり重い）
-		if (isSunVisible(this.worldObj, this.pos.add(0, 1, 0))) {
+		if (isSunVisible(this.worldObj, this.pos)) {
 			//通常通り発電(ソーラーと同じ）
 			this.production = maxProduction;
 			this.isSunVisible = true;
@@ -181,13 +205,16 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 	@Override
 	public void update() {
 		super.update();
-		if (this.worldObj.getTotalWorldTime()%80L==0L)
-			updateSunVisibility();
-		markDirty();
-		if (this.ticksSinceLastActiveUpdate%256==0)
-			this.activityMeter = 0;
-		this.activityMeter++;
-		this.ticksSinceLastActiveUpdate++;
+		// サーバー側のみ実行
+		if (!this.worldObj.isRemote) {
+			if (this.worldObj.getTotalWorldTime()%80L==0L)
+				updateSunVisibility();
+			markDirty();
+			if (this.ticksSinceLastActiveUpdate%256==0)
+				this.activityMeter = 0;
+			this.activityMeter++;
+			this.ticksSinceLastActiveUpdate++;
+		}
 	}
 
 	@Override
