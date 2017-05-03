@@ -79,8 +79,12 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 	//	}
 
 	public static boolean isSunVisible(final World world, final BlockPos pos) {
-		final float light = getSkyLight(world, pos.up());
-		return light>0.0F;
+		final BlockPos posup = pos.up();
+		world.calculateInitialSkylight();
+		final int lightblock = world.getBlockState(pos).getBlock().getLightValue(world, posup);
+		final float light = getSkyLight(world, posup);
+		// FMLLog.info("sun:%s, block:%s", light, lightblock);
+		return light>0.0F||lightblock>=15;
 	}
 
 	public static float getSkyLight(final World world, final BlockPos pos) {
@@ -205,16 +209,13 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 	@Override
 	public void update() {
 		super.update();
-		// サーバー側のみ実行
-		if (!this.worldObj.isRemote) {
-			if (this.worldObj.getTotalWorldTime()%80L==0L)
-				updateSunVisibility();
-			markDirty();
-			if (this.ticksSinceLastActiveUpdate%256==0)
-				this.activityMeter = 0;
-			this.activityMeter++;
-			this.ticksSinceLastActiveUpdate++;
-		}
+		if (this.worldObj.getTotalWorldTime()%80L==0L)
+			updateSunVisibility();
+		markDirty();
+		if (this.ticksSinceLastActiveUpdate%256==0)
+			this.activityMeter = 0;
+		this.activityMeter++;
+		this.ticksSinceLastActiveUpdate++;
 	}
 
 	@Override
