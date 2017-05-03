@@ -9,17 +9,17 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.Constants;
 
 /**
  * 人工光ソーラータイルエンティティロジック
@@ -34,9 +34,10 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 	// private boolean initialized;
 
 	// 光レベル計算用
-	//private static int[] lightPower = { 1,2,4,8,16,32,64,128,256,512,1024 };
+	// private static int[] lightPower = { 1,2,4,8,16,32,64,128,256,512,1024 };
 
-	private ItemStack inventory[] = new ItemStack[1];
+	private NonNullList<ItemStack> inventory = NonNullList.<ItemStack> withSize(1, ItemStack.EMPTY);
+	// private ItemStack inventory[] = new ItemStack[1];
 
 	private int production;
 
@@ -85,7 +86,7 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 	public List<ItemStack> getAdditionalDrops() {
 		final List<ItemStack> drop = Lists.newArrayList();
 		for (final ItemStack stack : this.inventory)
-			if (stack!=null&&stack.stackSize>0)
+			if (stack!=null&&stack.getCount()>0)
 				drop.add(stack);
 		return drop;
 	}
@@ -93,15 +94,16 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 	public void updateSunVisibility() {
 		final int maxProduction = getPower().getMaxProduction();
 		//真上のブロックが太陽光を浴びていれば（この判定がかなり重い）
-		if (isSunVisible(this.worldObj, this.pos.add(0, 1, 0))) {
+		if (isSunVisible(this.world, this.pos.add(0, 1, 0))) {
 			//通常通り発電(ソーラーと同じ）
 			this.production = maxProduction;
 			this.isSunVisible = true;
 		} else {
 			//内部インベントリを調べて
-			if (this.inventory[0]!=null) {
+			final ItemStack stack = this.inventory.get(0);
+			if (!stack.isEmpty()) {
 				double light = 0;
-				final Item item = this.inventory[0].getItem();
+				final Item item = stack.getItem();
 				//溶岩なら1/8
 				if (item instanceof ItemBlock) {
 					final Block block = ((ItemBlock) item).block;
@@ -132,34 +134,13 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 	@Override
 	public void readFromNBT(final NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
-
-		final NBTTagList nbttaglist = nbttagcompound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-		this.inventory = new ItemStack[getSizeInventory()];
-
-		for (int i = 0; i<nbttaglist.tagCount(); i++) {
-			final NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
-			final byte byte0 = nbttagcompound1.getByte("Slot");
-
-			if (byte0>=0&&byte0<this.inventory.length)
-				this.inventory[byte0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
-		}
+		ItemStackHelper.loadAllItems(nbttagcompound, this.inventory);
 	}
 
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
 		nbttagcompound = super.writeToNBT(nbttagcompound);
-
-		final NBTTagList nbttaglist = new NBTTagList();
-
-		for (int i = 0; i<this.inventory.length; i++)
-			if (this.inventory[i]!=null) {
-				final NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-				nbttagcompound1.setByte("Slot", (byte) i);
-				this.inventory[i].writeToNBT(nbttagcompound1);
-				nbttaglist.appendTag(nbttagcompound1);
-			}
-
-		nbttagcompound.setTag("Items", nbttaglist);
+		ItemStackHelper.saveAllItems(nbttagcompound, this.inventory);
 		return nbttagcompound;
 	}
 
@@ -182,7 +163,7 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 	@Override
 	public void update() {
 		super.update();
-		if (this.worldObj.getTotalWorldTime()%80L==0L)
+		if (this.world.getTotalWorldTime()%80L==0L)
 			updateSunVisibility();
 		markDirty();
 		if (this.ticksSinceLastActiveUpdate%256==0)
@@ -192,42 +173,33 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 	}
 
 	@Override
+	public ItemStack decrStackSize(final int index, final int count) {
+		final ItemStack itemstack = ItemStackHelper.getAndSplit(this.inventory, index, count);
+
+		if (!itemstack.isEmpty())
+			markDirty();
+
+		return itemstack;
+	}
+
+	@Override
 	public int getSizeInventory() {
-		return this.inventory.length;
+		return this.inventory.size();
 	}
 
 	@Override
 	public ItemStack getStackInSlot(final int var1) {
-		return this.inventory[0];
+		return this.inventory.get(0);
 	}
 
 	@Override
-	public ItemStack decrStackSize(final int i, final int j) {
-		if (this.inventory[i]!=null) {
-			if (this.inventory[i].stackSize<=j) {
-				final ItemStack itemstack = this.inventory[i];
-				this.inventory[i] = null;
-				return itemstack;
-			}
+	public void setInventorySlotContents(final int index, final ItemStack stack) {
+		this.inventory.set(index, stack);
 
-			final ItemStack itemstack1 = this.inventory[i].splitStack(j);
+		if (stack.getCount()>getInventoryStackLimit())
+			stack.setCount(getInventoryStackLimit());
 
-			if (this.inventory[i].stackSize==0)
-				this.inventory[i] = null;
-
-			return itemstack1;
-		} else
-			return null;
-	}
-
-	@Override
-	public void setInventorySlotContents(final int var1, final ItemStack var2) {
-		if (var1<this.inventory.length) {
-			this.inventory[var1] = var2;
-
-			if (var2!=null&&var2.stackSize>getInventoryStackLimit())
-				var2.stackSize = getInventoryStackLimit();
-		}
+		markDirty();
 	}
 
 	@Override
@@ -240,8 +212,8 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 	}
 
 	@Override
-	public boolean isUseableByPlayer(final EntityPlayer var1) {
-		return this.worldObj.getTileEntity(this.pos)==this&&var1.getDistance(this.pos.getX()+0.5D, this.pos.getY()+0.5D, this.pos.getZ()+0.5D)<=64D;
+	public boolean isUsableByPlayer(final EntityPlayer var1) {
+		return this.world.getTileEntity(this.pos)==this&&var1.getDistance(this.pos.getX()+0.5D, this.pos.getY()+0.5D, this.pos.getZ()+0.5D)<=64D;
 	}
 
 	@Override
@@ -287,14 +259,12 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 		return new TextComponentString(getName());
 	}
 
+	/**
+	 * Removes a stack from the given slot and returns it.
+	 */
 	@Override
 	public ItemStack removeStackFromSlot(final int index) {
-		if (this.inventory[index]!=null) {
-			final ItemStack stack = this.inventory[index];
-			this.inventory[index] = null;
-			return stack;
-		} else
-			return null;
+		return ItemStackHelper.getAndRemove(this.inventory, index);
 	}
 
 	@Override
@@ -313,7 +283,15 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 
 	@Override
 	public void clear() {
-		for (int i = 0; i<this.inventory.length; ++i)
-			this.inventory[i] = null;
+		this.inventory.clear();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		for (final ItemStack itemstack : this.inventory)
+			if (!itemstack.isEmpty())
+				return false;
+
+		return true;
 	}
 }

@@ -3,8 +3,6 @@ package ce.vrgenerator.vr;
 import java.util.List;
 import java.util.Random;
 
-import javax.annotation.Nullable;
-
 import com.google.common.collect.Lists;
 
 import ce.vrgenerator.CEItems;
@@ -27,6 +25,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
@@ -86,7 +85,7 @@ public class CEBlockVR extends BlockContainer implements IWrenchable {
 	}
 
 	@Override
-	public boolean onBlockActivated(final World world, final BlockPos pos, final IBlockState state, final EntityPlayer entityplayer, final EnumHand hand, @Nullable final ItemStack heldItem, final EnumFacing side, final float hitX, final float hitY, final float hitZ) {
+	public boolean onBlockActivated(final World world, final BlockPos pos, final IBlockState state, final EntityPlayer entityplayer, final EnumHand hand, final EnumFacing side, final float hitX, final float hitY, final float hitZ) {
 		final TileEntity tile = world.getTileEntity(pos);
 		if (tile==null)
 			return false;
@@ -122,7 +121,7 @@ public class CEBlockVR extends BlockContainer implements IWrenchable {
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void getSubBlocks(final Item item, final CreativeTabs tabs, final List<ItemStack> list) {
+	public void getSubBlocks(final Item item, final CreativeTabs tabs, final NonNullList<ItemStack> list) {
 		for (final CEVRType ce : CEVRType.values())
 			list.add(ce.createItemStack(1));
 	}

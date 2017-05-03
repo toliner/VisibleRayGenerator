@@ -2,7 +2,6 @@ package ce.vrgenerator.vr;
 
 import ce.vrgenerator.vr.logic.CETileEntityVRVisibleRay;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
@@ -42,61 +41,32 @@ public class CEContainerVR extends Container {
 	}
 
 	@Override
-	public ItemStack transferStackInSlot(final EntityPlayer par1EntityPlayer, final int par2) {
-		ItemStack var3 = null;
-		final Slot var4 = this.inventorySlots.get(par2);
+	public ItemStack transferStackInSlot(final EntityPlayer playerIn, final int index) {
+		ItemStack itemstack = ItemStack.EMPTY;
+		final Slot slot = this.inventorySlots.get(index);
 
-		if (var4!=null&&var4.getHasStack()) {
-			final ItemStack var5 = var4.getStack();
-			if (var5!=null) {
-				var3 = var5.copy();
+		if (slot!=null&&slot.getHasStack()) {
+			final ItemStack itemstack1 = slot.getStack();
+			itemstack = itemstack1.copy();
 
-				if (par2==0) {
-					if (!mergeItemStack(var5, 1, 36, true))
-						return null;
+			if (index<1) {
+				if (!mergeItemStack(itemstack1, 1, 37, true))
+					return ItemStack.EMPTY;
+			} else if (!mergeItemStack(itemstack1, 0, 9, false))
+				return ItemStack.EMPTY;
 
-					var4.onSlotChange(var5, var3);
-				} else if (!mergeItemStack(var5, 0, 1, false))
-					return null;
+			if (itemstack1.isEmpty())
+				slot.putStack(ItemStack.EMPTY);
+			else
+				slot.onSlotChanged();
 
-				if (var5.stackSize==0)
-					var4.putStack((ItemStack) null);
-				else
-					var4.onSlotChanged();
+			if (itemstack1.getCount()==itemstack.getCount())
+				return ItemStack.EMPTY;
 
-				if (var5.stackSize==var3.stackSize)
-					return null;
-
-				var4.onPickupFromSlot(par1EntityPlayer, var5);
-			}
+			slot.onTake(playerIn, itemstack1);
 		}
 
-		return var3;
-	}
-
-	@Override
-	public ItemStack slotClick(final int slot, final int button, final ClickType shift, final EntityPlayer entityplayer) {
-		ItemStack result = null;
-		if (slot!=0&&shift==ClickType.QUICK_MOVE) {
-			final Slot topslot = this.inventorySlots.get(0);
-			final Slot currentSlot = this.inventorySlots.get(slot);
-			ItemStack stack = currentSlot.getStack();
-			if (topslot.getStack()==null&&stack!=null&&topslot.isItemValid(stack)) {
-				final ItemStack topstack = stack.copy();
-				topstack.stackSize = 1;
-				if (--stack.stackSize<=0) {
-					stack = null;
-					currentSlot.putStack(stack);
-				}
-
-				topslot.putStack(topstack);
-				result = stack;
-			}
-		} else
-			result = super.slotClick(slot, button, shift, entityplayer);
-		this.tileEntity.updateSunVisibility();
-		this.sunIsVisible = this.tileEntity.isSunVisible();
-		return result;
+		return itemstack;
 	}
 
 	@Override
@@ -126,7 +96,7 @@ public class CEContainerVR extends Container {
 
 	@Override
 	public boolean canInteractWith(final EntityPlayer entityplayer) {
-		return this.tileEntity.isUseableByPlayer(entityplayer);
+		return this.tileEntity.isUsableByPlayer(entityplayer);
 	}
 
 	public int guiInventorySize() {

@@ -31,7 +31,7 @@ public class CEItemLavaUpdater extends Item {
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(final ItemStack stack, final World world, final EntityPlayer player, final EnumHand hand) {
+	public ActionResult<ItemStack> onItemRightClick(final World world, final EntityPlayer player, final EnumHand hand) {
 		final int px = (int) player.posX;
 		final int py = (int) player.posY;
 		final int pz = (int) player.posZ;
@@ -56,7 +56,9 @@ public class CEItemLavaUpdater extends Item {
 					}
 				}
 		//mod_CompactEngine.addChat("end lava update");
-		stack.damageItem(1, player);
+		final ItemStack stack = player.getHeldItem(hand);
+		if (stack!=null)
+			stack.damageItem(1, player);
 		return ActionResult.newResult(EnumActionResult.SUCCESS, stack);
 	}
 }

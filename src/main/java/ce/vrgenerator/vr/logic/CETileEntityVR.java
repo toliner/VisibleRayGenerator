@@ -55,7 +55,7 @@ public abstract class CETileEntityVR extends TileEntity implements IEnergySource
 	@Override
 	public void update() {
 		if (!this.addedToEnergyNet) {
-			if (!this.worldObj.isRemote) {
+			if (!this.world.isRemote) {
 				final EnergyTileLoadEvent event = new EnergyTileLoadEvent(this);
 				MinecraftForge.EVENT_BUS.post(event);
 			}
@@ -140,7 +140,7 @@ public abstract class CETileEntityVR extends TileEntity implements IEnergySource
 	 */
 	public CEPowerVR getPower() {
 		if (this.power==null) {
-			final IBlockState state = this.worldObj.getBlockState(getPos());
+			final IBlockState state = this.world.getBlockState(getPos());
 			final Block block = state.getBlock();
 			if (block instanceof CEBlockVR)
 				this.power = ((CEBlockVR) block).getTypeFromState(state).getPower();

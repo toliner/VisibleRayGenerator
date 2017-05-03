@@ -19,8 +19,8 @@
 			"name": "VisibleRayGenerator",
 			"parent": "",
 			"requiredMods": [
-				"Forge",
-				"IC2"
+				"forge",
+				"ic2"
 			],
 			"screenshots": [],
 			"updateUrl": "",
