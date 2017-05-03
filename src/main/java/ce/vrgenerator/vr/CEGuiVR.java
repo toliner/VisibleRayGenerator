@@ -21,7 +21,7 @@ public class CEGuiVR extends GuiContainer {
 	/**
 	 * GUIテクスチャ
 	 */
-	private static final ResourceLocation gui = new ResourceLocation("ic2", "textures/gui/GUISolarGenerator.png");
+	private static final ResourceLocation gui = new ResourceLocation("vrgenerator", "textures/gui/GUISolarGenerator.png");
 	private final CETileEntityVRVisibleRay tileentity;
 
 	public CEGuiVR(final EntityPlayer player, final CETileEntityVRVisibleRay tile) {
