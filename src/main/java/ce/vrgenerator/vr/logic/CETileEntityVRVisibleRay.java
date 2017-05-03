@@ -19,7 +19,10 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeDictionary.Type;
 
 /**
  * 人工光ソーラータイルエンティティロジック
@@ -77,9 +80,34 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 	//	}
 
 	public static boolean isSunVisible(final World world, final BlockPos pos) {
+		final BlockPos posup = pos.up();
 		world.calculateInitialSkylight();
-		final int light = world.getLight(pos);
-		return light==15;
+		final int lightblock = world.getBlockState(posup).getLightValue(world, posup);
+		final float light = getSkyLight(world, posup);
+		// FMLLog.info("sun:%s, block:%s", light, lightblock);
+		return light>0.0F||lightblock>=15;
+	}
+
+	public static float getSkyLight(final World world, final BlockPos pos) {
+		// FMLLog.getLogger().info(pos);
+		if (world.provider.hasNoSky())
+			return 0.0F;
+		else {
+			float sunBrightness = limit((float) Math.cos(world.getCelestialAngleRadians(1.0F))*2.0F+0.2F, 0.0F, 1.0F);
+
+			if (!BiomeDictionary.hasType(world.getChunkFromBlockCoords(pos).getBiome(pos, world.getBiomeProvider()), Type.SANDY)) {
+				sunBrightness *= 1.0F-world.getRainStrength(1.0F)*5.0F/16.0F;
+				sunBrightness *= 1.0F-world.getThunderStrength(1.0F)*5.0F/16.0F;
+
+				sunBrightness = limit(sunBrightness, 0.0F, 1.0F);
+			}
+
+			return world.getLightFor(EnumSkyBlock.SKY, pos)/15.0F*sunBrightness;
+		}
+	}
+
+	private static float limit(final float value, final float min, final float max) {
+		return !Float.isNaN(value)&&value>min ? value>=max ? max : value : min;
 	}
 
 	@Override
@@ -94,7 +122,7 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 	public void updateSunVisibility() {
 		final int maxProduction = getPower().getMaxProduction();
 		//真上のブロックが太陽光を浴びていれば（この判定がかなり重い）
-		if (isSunVisible(this.world, this.pos.add(0, 1, 0))) {
+		if (isSunVisible(this.world, this.pos)) {
 			//通常通り発電(ソーラーと同じ）
 			this.production = maxProduction;
 			this.isSunVisible = true;

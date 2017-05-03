@@ -2,6 +2,7 @@ package ce.vrgenerator.vr;
 
 import ce.vrgenerator.vr.logic.CETileEntityVRVisibleRay;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
@@ -67,6 +68,14 @@ public class CEContainerVR extends Container {
 		}
 
 		return itemstack;
+	}
+
+	@Override
+	public ItemStack slotClick(final int slot, final int button, final ClickType shift, final EntityPlayer entityplayer) {
+		final ItemStack result = super.slotClick(slot, button, shift, entityplayer);
+		this.tileEntity.updateSunVisibility();
+		this.sunIsVisible = this.tileEntity.isSunVisible();
+		return result;
 	}
 
 	@Override
