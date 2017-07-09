@@ -1,7 +1,7 @@
 
-﻿vrgenerator.config=永久光発電機Modの設定
-vrgenerator.config.solarCostUp=ソーラーパネルコスト上昇
-vrgenerator.config.resistanceVanilla=バニラブロックの耐性上昇
+vrgenerator.config.name=永久光発電機Modの設定
+vrgenerator.config.solarCostUp.name=ソーラーパネルコスト上昇
+vrgenerator.config.resistanceVanilla.name=バニラブロックの耐性上昇
 vrgenerator.gui.solar=人工光ソーラー %d EU/t
 vrgenerator.visibleraysolar.name=人工光ソーラー
 vrgenerator.visibleraysolar.visibleray1.name=人工光ソーラー 1 EU/t

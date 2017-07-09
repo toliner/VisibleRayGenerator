@@ -86,7 +86,7 @@ public class CEContainerVR extends Container {
 			final IContainerListener icrafting = this.listeners.get(i);
 
 			if (this.sunIsVisible!=this.tileEntity.isSunVisible()||!this.initialized) {
-				icrafting.sendProgressBarUpdate(this, 0, this.tileEntity.isSunVisible() ? 1 : 0);
+				icrafting.sendWindowProperty(this, 0, this.tileEntity.isSunVisible() ? 1 : 0);
 				this.initialized = true;
 			}
 		}

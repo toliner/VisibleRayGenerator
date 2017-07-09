@@ -11,13 +11,17 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 /**
  * 共通処理
@@ -57,10 +61,10 @@ public class CommonProxy implements IGuiHandler {
 
 	public void preInit(final FMLPreInitializationEvent event) {
 		// GameRegistry.registerBlock(CEItems.solarBlock = new CEBlockVR(), CEItemVR.class, "visibleraysolar");
-		GameRegistry.register(CEItems.solarBlock = new CEBlockVR());
-		GameRegistry.register(CEItems.solarItemBlock = new CEItemVR(CEItems.solarBlock));
+		ForgeRegistries.BLOCKS.register(CEItems.solarBlock = new CEBlockVR());
+		ForgeRegistries.ITEMS.register(CEItems.solarItemBlock = new CEItemVR(CEItems.solarBlock));
 		// GameRegistry.register(CEItems.lavaUpdater = new CEItemLavaUpdater(), "lavaupdater");
-		GameRegistry.register(CEItems.lavaUpdater = new CEItemLavaUpdater());
+		ForgeRegistries.ITEMS.register(CEItems.lavaUpdater = new CEItemLavaUpdater());
 
 		try {
 			final CreativeTabs tabIC2 = (CreativeTabs) Info.ic2ModInstance.getClass().getField("tabIC2").get(Info.ic2ModInstance);
@@ -104,6 +108,25 @@ public class CommonProxy implements IGuiHandler {
 		}
 	}
 
+	public static ResourceLocation getRecipeGroup(final ItemStack stack) {
+		String s = stack.getUnlocalizedName();
+		final int idx = s.lastIndexOf(":");
+		if (idx>=0)
+			s = s.substring(idx+1);
+		return new ResourceLocation(Reference.MODID, s);
+	}
+
+	public static ShapedOreRecipe addOredictRecipe(final ItemStack output, final Object... recipe) {
+		final ShapedOreRecipe sor = new ShapedOreRecipe(getRecipeGroup(output), output, recipe);
+		ForgeRegistries.RECIPES.register(sor.setRegistryName(sor.getGroup()));
+		return sor;
+	}
+
+	public static void addShapelessOredictRecipe(final ItemStack output, final Object... recipe) {
+		final ShapelessOreRecipe sor = new ShapelessOreRecipe(getRecipeGroup(output), output, recipe);
+		ForgeRegistries.RECIPES.register(sor.setRegistryName(sor.getGroup()));
+	}
+
 	/**
 	 * IC2レシピ登録
 	 */
@@ -113,17 +136,17 @@ public class CommonProxy implements IGuiHandler {
 		final ItemStack solar3 = new ItemStack(CEItems.solarBlock, 1, 2);
 		final ItemStack solar4 = new ItemStack(CEItems.solarBlock, 1, 3);
 
-		GameRegistry.addRecipe(new ItemStack(CEItems.lavaUpdater), "c", "a", "i",
+		addOredictRecipe(new ItemStack(CEItems.lavaUpdater), "c", "a", "i",
 				'c', CEItems.IC2.celllava, 'a', CEItems.IC2.advcircuit, 'i', CEItems.IC2.ironplate);
-		GameRegistry.addShapelessRecipe(solar1, CEItems.IC2.solar, CEItems.IC2.advcircuit);
+		addShapelessOredictRecipe(solar1, CEItems.IC2.solar, CEItems.IC2.advcircuit);
 		if (VisibleRayGenerator.isSolarCostUp) {
-			GameRegistry.addRecipe(solar2, "sss", "sms", "sss", 's', solar1, 'm', CEItems.IC2.batbox);
-			GameRegistry.addRecipe(solar3, "sss", "sms", "sss", 's', solar2, 'm', CEItems.IC2.mfe);
-			GameRegistry.addRecipe(solar4, "sss", "sms", "sss", 's', solar3, 'm', CEItems.IC2.mfsu);
+			addOredictRecipe(solar2, "sss", "sms", "sss", 's', solar1, 'm', CEItems.IC2.batbox);
+			addOredictRecipe(solar3, "sss", "sms", "sss", 's', solar2, 'm', CEItems.IC2.mfe);
+			addOredictRecipe(solar4, "sss", "sms", "sss", 's', solar3, 'm', CEItems.IC2.mfsu);
 		} else {
-			GameRegistry.addRecipe(solar2, "sss", "sms", "sss", 's', solar1, 'm', CEItems.IC2.lvtransformer);
-			GameRegistry.addRecipe(solar3, "sss", "sms", "sss", 's', solar2, 'm', CEItems.IC2.mvtransformer);
-			GameRegistry.addRecipe(solar4, "sss", "sms", "sss", 's', solar3, 'm', CEItems.IC2.hvtransformer);
+			addOredictRecipe(solar2, "sss", "sms", "sss", 's', solar1, 'm', CEItems.IC2.lvtransformer);
+			addOredictRecipe(solar3, "sss", "sms", "sss", 's', solar2, 'm', CEItems.IC2.mvtransformer);
+			addOredictRecipe(solar4, "sss", "sms", "sss", 's', solar3, 'm', CEItems.IC2.hvtransformer);
 		}
 
 		final ItemStack[] rlg = new ItemStack[11];
@@ -155,10 +178,10 @@ public class CommonProxy implements IGuiHandler {
 				CEItems.IC2.plateiridium,
 		};
 
-		GameRegistry.addRecipe(rlg[5], "psp", "gmg", "psp",
+		addOredictRecipe(rlg[5], "psp", "gmg", "psp",
 				'p', CEItems.IC2.coalchunk, 'g', solar4, 'm', CEItems.IC2.mvtransformer, 's', CEItems.Vanilla.glowstone);
 
 		for (int i = 0; i<10; i++)
-			GameRegistry.addRecipe(rlg[i+1], "pgp", "gmg", "pgp", 'p', plates[i], 'g', rlg[i], 'm', items[i]);
+			addOredictRecipe(rlg[i+1], "pgp", "gmg", "pgp", 'p', plates[i], 'g', rlg[i], 'm', items[i]);
 	}
 }

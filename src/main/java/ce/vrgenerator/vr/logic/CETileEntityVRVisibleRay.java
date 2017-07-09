@@ -90,7 +90,7 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 
 	public static float getSkyLight(final World world, final BlockPos pos) {
 		// FMLLog.getLogger().info(pos);
-		if (world.provider.hasNoSky())
+		if (!world.provider.hasSkyLight())
 			return 0.0F;
 		else {
 			float sunBrightness = limit((float) Math.cos(world.getCelestialAngleRadians(1.0F))*2.0F+0.2F, 0.0F, 1.0F);
@@ -134,7 +134,7 @@ public class CETileEntityVRVisibleRay extends CETileEntityVR implements IInvento
 				final Item item = stack.getItem();
 				//溶岩なら1/8
 				if (item instanceof ItemBlock) {
-					final Block block = ((ItemBlock) item).block;
+					final Block block = ((ItemBlock) item).getBlock();
 					final int blocklight = CEItems.getItemLightLevel(item);
 					if (block==CEItems.Vanilla.blocklava||block==CEItems.Vanilla.blockflowinglava)
 						light = maxProduction/8.0d;

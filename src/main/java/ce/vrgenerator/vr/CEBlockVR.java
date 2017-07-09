@@ -121,7 +121,7 @@ public class CEBlockVR extends BlockContainer implements IWrenchable {
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void getSubBlocks(final Item item, final CreativeTabs tabs, final NonNullList<ItemStack> list) {
+	public void getSubBlocks(final CreativeTabs tabs, final NonNullList<ItemStack> list) {
 		for (final CEVRType ce : CEVRType.values())
 			list.add(ce.createItemStack(1));
 	}

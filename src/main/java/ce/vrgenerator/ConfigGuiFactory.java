@@ -30,7 +30,7 @@ public class ConfigGuiFactory implements IModGuiFactory {
 	public static class ConfigGui extends GuiConfig {
 
 		public ConfigGui(final @Nullable GuiScreen parent) {
-			super(parent, getConfigElements(), Reference.MODID, false, false, I18n.format("﻿vrgenerator.config.name"));
+			super(parent, getConfigElements(), Reference.MODID, false, false, I18n.format("vrgenerator.config.name"));
 		}
 
 		private static @Nonnull List<IConfigElement> getConfigElements() {
@@ -70,18 +70,17 @@ public class ConfigGuiFactory implements IModGuiFactory {
 	}
 
 	@Override
-	public @Nullable Class<? extends GuiScreen> mainConfigGuiClass() {
-		return ConfigGui.class;
-	}
-
-	@Override
 	public @Nullable Set<RuntimeOptionCategoryElement> runtimeGuiCategories() {
 		return null;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	public RuntimeOptionGuiHandler getHandlerFor(final RuntimeOptionCategoryElement element) {
-		return null;
+	public boolean hasConfigGui() {
+		return true;
+	}
+
+	@Override
+	public GuiScreen createConfigGui(final GuiScreen parentScreen) {
+		return new ConfigGui(parentScreen);
 	}
 }

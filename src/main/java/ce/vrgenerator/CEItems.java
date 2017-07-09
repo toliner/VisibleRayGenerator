@@ -106,7 +106,7 @@ public class CEItems {
 	@SuppressWarnings("deprecation")
 	public static int getItemLightLevel(final Item item) {
 		if (item instanceof ItemBlock) {
-			final Block block = ((ItemBlock) item).block;
+			final Block block = ((ItemBlock) item).getBlock();
 			try {
 				return block.getLightValue(block.getDefaultState());
 			} catch (final Exception e) {

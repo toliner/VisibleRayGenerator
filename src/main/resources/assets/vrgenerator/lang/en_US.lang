@@ -1,7 +1,7 @@
 
-﻿vrgenerator.config=VisibleRay Generator Config
-vrgenerator.config.solarCostUp=More solar panel cost
-vrgenerator.config.resistanceVanilla=Improve Resistance
+vrgenerator.config.name=VisibleRay Generator Config
+vrgenerator.config.solarCostUp.name=More solar panel cost
+vrgenerator.config.resistanceVanilla.name=Improve Resistance
 vrgenerator.gui.solar=VisibleRay Generator %d EU/t
 vrgenerator.visibleraysolar.name=VisibleRay Generator
 vrgenerator.visibleraysolar.visibleray1.name=VisibleRay Generator 1 EU/t
