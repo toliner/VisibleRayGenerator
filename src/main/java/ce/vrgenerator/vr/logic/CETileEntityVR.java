@@ -28,7 +28,7 @@ import net.minecraftforge.common.MinecraftForge;
  * @author A.K
  * @author Kamesuta
  */
-public abstract class CETileEntityVR extends TileEntity implements IEnergySource, IMultiEnergySource, ITickable {
+public abstract class CETileEntityVR extends TileEntity implements IEnergySource, ITickable {
 	/**
 	 * 一度ずつ交互にチャンクロード/アンロードを発生させます
 	 */
@@ -106,22 +106,6 @@ public abstract class CETileEntityVR extends TileEntity implements IEnergySource
 	@Override
 	public void drawEnergy(final double amount) {
 
-	}
-
-	/**
-	 * 1.9から電圧による爆発が再実装されたため、非推奨のIMultiEnergySourceを使用し、EUを分割して送信します。
-	 */
-	@Override
-	public boolean sendMultipleEnergyPackets() {
-		return true;
-	}
-
-	/**
-	 * 1.9から電圧による爆発が再実装されたため、非推奨のIMultiEnergySourceを使用し、EUを分割して送信します。
-	 */
-	@Override
-	public int getMultipleEnergyPacketAmount() {
-		return getPower().getPacket();
 	}
 
 	@Override

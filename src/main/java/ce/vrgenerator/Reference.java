@@ -5,8 +5,9 @@ import javax.annotation.Nonnull;
 /**
  * 参照情報
  * <p>
- * Gradleにより、このクラスの「${}」は書き換えられます
- *
+ * <s> Gradleにより、このクラスの「${}」は書き換えられます </s>
+ * <p>
+ * ForgeGradle 3で置き換え機能が廃止されたためハードコードされます
  * @author Kamesuta
  */
 public class Reference {
@@ -14,12 +15,8 @@ public class Reference {
 	public static final @Nonnull String MODID = "vrgenerator";
 	/** Modの名前 */
 	public static final @Nonnull String NAME = "VisibleRayGenerator";
-	/** バージョン ※書き換えられます */
-	public static final @Nonnull String VERSION = "${version}";
-	/** Forgeバージョン ※書き換えられます */
-	public static final @Nonnull String FORGE = "${forgeversion}";
-	/** Minecraftバージョン ※書き換えられます */
-	public static final @Nonnull String MINECRAFT = "${mcversion}";
+	/** バージョン */
+	public static final @Nonnull String VERSION = "5.1.0";
 	/** サーバープロキシ */
 	public static final @Nonnull String PROXY_SERVER = "ce.vrgenerator.CommonProxy";
 	/** クライアントプロキシ */
